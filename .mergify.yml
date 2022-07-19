@@ -32,7 +32,6 @@ queue_rules:
 pull_request_rules:
   - name: automatic merge for hotfix
     conditions:
-      - base=main
       - label=hotfix
     actions:
       queue:
@@ -40,7 +39,6 @@ pull_request_rules:
         
   - name: automatic merge
     conditions:
-      - base=main
       - label=autoqueue
     actions:
       queue:

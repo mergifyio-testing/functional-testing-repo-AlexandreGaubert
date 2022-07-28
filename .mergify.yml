@@ -40,11 +40,14 @@ pull_request_rules:
   - name: copy pull request when CI passes
     conditions:
       - base=main
-      - label=ready for prod
+      - label=armageddon
     actions:
-      copy:
-        branches:
+      label:
+        add:
           - hotfix
+          - autoqueue
+          - truc
+          - blabla
         
   - name: automatic merge
     conditions:

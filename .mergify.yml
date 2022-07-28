@@ -37,6 +37,15 @@ pull_request_rules:
       queue:
         name: hotfix
         
+  - name: copy pull request when CI passes
+    conditions:
+      - base=main
+      - label=ready for prod
+    actions:
+      copy:
+        branches:
+          - hotfix
+        
   - name: automatic merge
     conditions:
       - label=autoqueue

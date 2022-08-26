@@ -37,7 +37,13 @@ pull_request_rules:
       queue:
         name: hotfix
         
-  - name: copy pull request when CI passes
+  - name: Update PR
+    conditions:
+        - label=update
+    actions:
+        update:
+
+  - name: Armageddon
     conditions:
       - base=main
       - label=armageddon

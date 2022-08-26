@@ -31,6 +31,8 @@ queue_rules:
 
 pull_request_rules:
   - name: automatic merge for hotfix
+    disabled:
+      reason: The prod is broken don't push Pull request or anything
     conditions:
       - label=hotfix
     actions:

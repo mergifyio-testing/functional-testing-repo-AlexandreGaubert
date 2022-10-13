@@ -54,7 +54,7 @@ pull_request_rules:
         add:
           - hotfix
           - autoqueue
-          - truc
+          - truc-blabla
           - blabla
       assign:
         add_users:

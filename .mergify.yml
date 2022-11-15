@@ -12,13 +12,20 @@ queue_rules:
   - name: hotfix
     conditions:
         - check-success=test
+        - check-success=blabla
+        - check-success=Long CI nameuuuuuuuuu
+        - check-success=CAPITAL BECAUSE WHY NOT
+        - schedule=Mon-Fri 09:00-17:30[Europe/Paris]
     speculative_checks: 5
 
   - name: default
     allow_inplace_checks: true
     conditions:
-      - check-success=test
-      - schedule=Mon-Fri 09:00-17:30[Europe/Paris]
+        - check-success=test
+        - check-success=blabla
+        - check-success=Long CI nameuuuuuuuuu
+        - check-success=CAPITAL BECAUSE WHY NOT
+        - schedule=Mon-Fri 09:00-17:30[Europe/Paris]
     speculative_checks: 5
 
   - name: lowprio
@@ -45,7 +52,6 @@ pull_request_rules:
 
   - name: Armageddon
     conditions:
-      - base=main
       - label=armageddon
     actions:
       label:

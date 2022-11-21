@@ -20,6 +20,7 @@ queue_rules:
 
   - name: default
     allow_inplace_checks: true
+    truc: machin
     conditions:
         - check-success=test
         - check-success=blabla

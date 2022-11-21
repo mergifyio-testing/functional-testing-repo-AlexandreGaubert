@@ -21,7 +21,7 @@ queue_rules:
   - name: default
     allow_inplace_checks: true
     conditions:
-        - check-success=test
+        - check-suc  cess=test
         - check-success=blabla
         - check-success=Long CI nameuuuuuuuuu
         - check-success=CAPITAL BECAUSE WHY NOT

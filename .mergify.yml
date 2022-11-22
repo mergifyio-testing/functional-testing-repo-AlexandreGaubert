@@ -20,7 +20,6 @@ queue_rules:
 
   - name: default
     allow_inplace_checks: true
-    truc: machin
     conditions:
         - check-success=test
         - check-success=blabla
@@ -42,8 +41,6 @@ pull_request_rules:
     conditions:
       - label=hotfix
     actions:
-      truc:
-        machin
       queue:
         name: hotfix
         

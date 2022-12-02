@@ -11,7 +11,7 @@ defaults:
 queue_rules:
   - name: hotfix
     conditions:
-        - check-success=test
+        - check-success=CI / test
         - check-success=blabla
         - check-success=Long CI nameuuuuuuuuu
         - check-success=CAPITAL BECAUSE WHY NOT

@@ -70,27 +70,12 @@ pull_request_rules:
       comment:
           message: |
             blabla
-      comment:
-          message: |
-            blabla
-      edit:
-        draft: True
-      comment:
-          message: |
-            blabla
-      comment:
-          message: |
-            blabla
-      review:
-        type: APPROVE
-        message: Automatically approving dependabot
       review:
         type: REQUEST_CHANGES
         message: Request changes
       edit:
         draft: False
 
-        
   - name: automatic merge
     conditions:
       - label=autoqueue

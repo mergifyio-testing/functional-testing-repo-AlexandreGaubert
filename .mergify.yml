@@ -44,6 +44,12 @@ pull_request_rules:
       queue:
         name: hotfix
         
+  - name: automatic merge not queue
+    conditions:
+      - label=merge
+    actions:
+      merge:
+        
   - name: Update PR
     conditions:
         - label=update

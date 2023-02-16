@@ -7,27 +7,24 @@ defaults:
         {{title}} (#{{number}})
 
         {{body}}
-
 queue_rules:
   - name: hotfix
     conditions:
-        - check-success=CI / test
-        - check-success=blabla
-        - check-success=Long CI nameuuuuuuuuu
-        - check-success=CAPITAL BECAUSE WHY NOT
-        - schedule=Sat-Sun 09:00-17:30[Europe/Paris]
+      - check-success=CI / test
+      - check-success=blabla
+      - check-success=Long CI nameuuuuuuuuu
+      - check-success=CAPITAL BECAUSE WHY NOT
+      - schedule=Sat-Sun 09:00-17:30[Europe/Paris]
     speculative_checks: 5
-
   - name: default
     allow_inplace_checks: true
     conditions:
-        - check-success=test
-        - check-success=blabla
-        - check-success=Long CI nameuuuuuuuuu
-        - check-success=CAPITAL BECAUSE WHY NOT
-        - schedule=Mon-Fri 09:00-17:30[Europe/Paris]
+      - check-success=test
+      - check-success=blabla
+      - check-success=Long CI nameuuuuuuuuu
+      - check-success=CAPITAL BECAUSE WHY NOT
+      - schedule=Mon-Fri 09:00-17:30[Europe/Paris]
     speculative_checks: 5
-
   - name: lowprio
     allow_inplace_checks: true
     conditions:
@@ -35,7 +32,8 @@ queue_rules:
       - schedule=Mon-Fri 09:30-17:00[Europe/Paris]
     speculative_checks: 3
     batch_size: 5
-
+  - name: test-queue
+    merge_conditions: []
 pull_request_rules:
   - name: automatic merge for hotfix
     conditions:
@@ -43,19 +41,16 @@ pull_request_rules:
     actions:
       queue:
         name: hotfix
-        
   - name: automatic merge not queue
     conditions:
       - label=merge
     actions:
-      merge:
-        
+      merge: 
   - name: Update PR
     conditions:
-        - label=update
+      - label=update
     actions:
-        update:
-
+      update: 
   - name: Armageddon
     conditions:
       - label=armageddon
@@ -74,14 +69,13 @@ pull_request_rules:
         branches:
           - hotfix
       comment:
-          message: |
-            blabla
+        message: |
+          blabla
       review:
         type: REQUEST_CHANGES
         message: Request changes
       edit:
-        draft: False
-
+        draft: false
   - name: automatic merge
     conditions:
       - label=autoqueue

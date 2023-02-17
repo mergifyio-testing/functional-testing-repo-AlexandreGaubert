@@ -33,7 +33,24 @@ queue_rules:
     speculative_checks: 3
     batch_size: 5
   - name: test-queue
-    merge_conditions: []
+    merge_conditions:
+        - or:
+            # Author is engineering manager, we allow with one review
+            - and:
+              - author=@eng-mgr
+              - "#approved-reviews-by>=1"
+            - and:
+              - author=@devs
+              # in any other case, we allow if approve by engineering manager
+              # or anyone if it's a regular fix/revert
+              - or:
+                    - approved-reviews-by=@eng-mgr
+                    - and:
+                        - title~=^(revert|fix)
+                        - "#approved-reviews-by>=1"
+        - "#changes-requested-reviews-by=0"
+        - "#review-requested=0"
+        - label!=manual merge
 pull_request_rules:
   - name: automatic merge for hotfix
     conditions:

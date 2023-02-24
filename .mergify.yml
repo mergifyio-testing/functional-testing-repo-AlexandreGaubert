@@ -33,7 +33,7 @@ queue_rules:
     speculative_checks: 3
     batch_size: 5
   - name: automatic merge for hotfix
-    conditions:
+    merge_conditions:
       - base=main
       - author=@devs
       - check-success=semantic-pull-request
@@ -45,6 +45,7 @@ queue_rules:
               - author=@eng-mgr
               - '#approved-reviews-by>=1'
           - and:
+              - check-pending=main
               - author=@devs
               - or:
                   - approved-reviews-by=@eng-mgr

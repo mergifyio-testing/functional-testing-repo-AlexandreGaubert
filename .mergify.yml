@@ -12,8 +12,7 @@ queue_rules:
     conditions:
       - check-success=CI / test
       - check-success=blabla
-      - check-success=Long CI nameuuuuuuuuu
-      - check-success=CAPITAL BECAUSE WHY NOT
+      - check-success=wait-job
       - schedule=Sat-Sun 09:00-17:30[Europe/Paris]
     speculative_checks: 5
   - name: default

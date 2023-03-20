@@ -23,7 +23,7 @@ queue_rules:
   - name: default
     allow_inplace_checks: true
     conditions:
-      - and: *CheckRuns
+      - or: *CheckRuns
       - schedule=Mon-Fri 09:00-17:30[Europe/Paris]
     speculative_checks: 5
 

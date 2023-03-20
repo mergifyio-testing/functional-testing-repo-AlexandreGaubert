@@ -1,103 +1,130 @@
-defaults:
-  actions:
-    queue:
-      name: default
-      method: squash
-      commit_message_template: |
-        {{title}} (#{{number}})
+extends: .github
 
-        {{body}}
 queue_rules:
   - name: hotfix
+    allow_inplace_checks: true
     conditions:
-      - check-success=CI / test
-      - check-success=blabla
-      - check-success=wait-job
-      - schedule=Sat-Sun 09:00-17:30[Europe/Paris]
+      - and: &CheckRuns
+          - or:
+              - -label=docker
+              - check-success=docker-onpremise
+          - check-success=semgrep
+          - check-success=front (eslint)
+          - check-success=front (test)
+          - check-success=front (test:cf-page-worker)
+          - check-success=front-component
+          - check-success=front-e2e (1)
+          - check-success=front-e2e (2)
+          - check-success=front-e2e (3)
+          - check-success=front-e2e (4)
+          - check-success=front-e2e (5)
     speculative_checks: 5
+
   - name: default
     allow_inplace_checks: true
     conditions:
-      - check-success=test
-      - check-success=blabla
-      - check-success=Long CI nameuuuuuuuuu
-      - check-success=CAPITAL BECAUSE WHY NOT
+      - and: *CheckRuns
       - schedule=Mon-Fri 09:00-17:30[Europe/Paris]
     speculative_checks: 5
+
   - name: lowprio
     allow_inplace_checks: true
     conditions:
-      - check-success=test
-      - schedule=Mon-Fri 09:30-17:00[Europe/Paris]
-    speculative_checks: 3
-    batch_size: 5
+      - and: *CheckRuns
+      - schedule=Mon-Fri 09:00-17:00[Europe/Paris]
+    batch_size: 7
+    batch_max_wait_time: 5min
+    queue_branch_merge_method: fast-forward
+    disallow_checks_interruption_from_queues:
+      - default
+
+pull_request_rules:
   - name: automatic merge for hotfix
     conditions:
       - base=main
       - author=@devs
       - check-success=semantic-pull-request
-      - 'check-success=Rule: testing requirements (post_check)'
+      - "check-success=Rule: testing requirements (post_check)"
       - label=hotfix
       - title~=^(revert|fix)
       - or:
+          # Author is engineering manager, we allow with one review
           - and:
               - author=@eng-mgr
-              - '#approved-reviews-by>=1'
+              - "#approved-reviews-by>=1"
           - and:
               - author=@devs
+              # in any other case, we allow if approve by engineering manager
+              # or anyone if it's a regular fix/revert
               - or:
                   - approved-reviews-by=@eng-mgr
                   - and:
                       - title~=^(revert|fix)
-                      - '#approved-reviews-by>=1'
-      - '#changes-requested-reviews-by=0'
-      - '#review-requested=0'
+                      - "#approved-reviews-by>=1"
+      - "#changes-requested-reviews-by=0"
+      - "#review-requested=0"
       - label!=manual merge
-pull_request_rules:
-  - name: automatic merge for hotfix
-    conditions:
-      - label=hotfix
     actions:
       queue:
         name: hotfix
-  - name: automatic merge not queue
-    conditions:
-      - label=merge
-    actions:
-      merge: 
-  - name: Update PR
-    conditions:
-      - label=update
-    actions:
-      update: 
-  - name: Armageddon
-    conditions:
-      - label=armageddon
-    actions:
-      label:
-        add:
-          - hotfix
-          - autoqueue
-          - soap
-          - blabla
-      assign:
-        add_users:
-          - Machin
-          - Truc
-      backport:
-        branches:
-          - hotfix
-      comment:
-        message: |
-          blabla
-      review:
-        type: REQUEST_CHANGES
-        message: Request changes
-      edit:
-        draft: false
+
   - name: automatic merge
     conditions:
-      - label=autoqueue
+      - base=main
+      - check-success=semantic-pull-request
+      - and: *CheckRuns
+      - "check-success=Rule: testing requirements (post_check)"
+      - "check-success=Rule: changelog requirements (post_check)"
+      - "#approved-reviews-by>=2"
+      - "#changes-requested-reviews-by=0"
+      - "#review-requested=0"
+      - "#review-threads-unresolved=0"
+      - label!=manual merge
     actions:
       queue:
-        name: default
+
+  - name: automatic merge from dependabot
+    conditions:
+      - and: *CheckRuns
+      - check-success=semantic-pull-request
+      - author=dependabot[bot]
+      - label!=manual merge
+      - "#commits=1"
+    actions:
+      queue:
+        name: lowprio
+        method: merge
+        commit_message_template: null
+
+  - name: request review
+    conditions:
+      - -author=dependabot[bot]
+      - -author=mergify-ci-bot
+      - -merged
+      - -closed
+      - and: *CheckRuns
+      - "check-success=Rule: testing requirements (post_check)"
+      - "#approved-reviews-by=0"
+      - "#changes-requested-reviews-by=0"
+      - "review-requested!=@devs"
+    actions:
+      request_reviews:
+        teams:
+          - devs
+
+  - name: testing requirements
+    conditions:
+      - or:
+          - label=skip tests
+          - "-title~=^(feat|fix)"
+          - "files~=src/tests"
+          - "files~=^cypress/component"
+          - "files~=^cypress/e2e"
+    actions:
+      post_check:
+        title: |
+          {% if check_succeed %}
+          Testing requirements are present.
+          {% else %}
+          Testing requirements are missing.
+          {% endif %}

@@ -48,7 +48,7 @@ pull_request_rules:
       - label=hotfix
       - title~=^(revert|fix)
       - *Schedule
-      - or:
+      - or: &Truc
           # Author is engineering manager, we allow with one review
           - and:
               - author=@eng-mgr
@@ -74,6 +74,7 @@ pull_request_rules:
       - base=main
       - check-success=semantic-pull-request
       - and: *CheckRuns
+      - and: *Truc
       - "check-success=Rule: testing requirements (post_check)"
       - "check-success=Rule: changelog requirements (post_check)"
       - "#approved-reviews-by>=2"

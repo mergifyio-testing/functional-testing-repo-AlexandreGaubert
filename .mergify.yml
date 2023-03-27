@@ -48,7 +48,7 @@ queue_rules:
   - name: lowprio
     allow_inplace_checks: true
     conditions:
-      - and: &CheckRuns
+      - and: &ref_0
           - or:
               - '-label=docker'
               - check-success=docker-onpremise
@@ -78,7 +78,7 @@ pull_request_rules:
       - label=hotfix
       - title~=^(revert|fix)
       - schedule=Mon-Fri 09:00-17:00[Europe/Paris]
-      - or: &Schedule
+      - or: &ref_1
           - and:
               - author=@eng-mgr
               - '#approved-reviews-by>=1'
@@ -99,8 +99,8 @@ pull_request_rules:
     conditions:
       - base=main
       - check-success=semantic-pull-request
-      - and: *CheckRuns
-      - and: *Schedule
+      - and: *ref_0
+      - and: *ref_1
       - 'check-success=Rule: testing requirements (post_check)'
       - 'check-success=Rule: changelog requirements (post_check)'
       - '#approved-reviews-by>=2'
@@ -112,7 +112,7 @@ pull_request_rules:
       queue: 
   - name: automatic merge from dependabot
     conditions:
-      - and: *CheckRuns
+      - and: *ref_0
       - check-success=semantic-pull-request
       - author=dependabot[bot]
       - label!=manual merge
@@ -128,7 +128,7 @@ pull_request_rules:
       - '-author=mergify-ci-bot'
       - '-merged'
       - '-closed'
-      - and: *CheckRuns
+      - and: *ref_0
       - 'check-success=Rule: testing requirements (post_check)'
       - '#approved-reviews-by=0'
       - '#changes-requested-reviews-by=0'

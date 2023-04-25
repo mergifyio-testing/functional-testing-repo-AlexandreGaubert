@@ -23,7 +23,6 @@ queue_rules:
       - check-success=CAPITAL BECAUSE WHY NOT
       - schedule=Mon-Fri 09:00-17:30[Europe/Paris]
     speculative_checks: 5
-    batch_max_wait_time: 30 min
     batch_size: 5
   - name: lowprio
     allow_inplace_checks: true

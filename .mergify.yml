@@ -62,6 +62,8 @@ queue_rules:
       - label!=manual merge
   - name: <div><input/></div>
     merge_conditions: []
+  - name: qsdqdqd
+    merge_conditions: []
 pull_request_rules:
   - name: automatic merge for hotfix
     conditions:

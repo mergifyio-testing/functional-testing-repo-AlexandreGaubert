@@ -7,7 +7,6 @@ defaults:
         {{title}} (#{{number}})
 
         {{body}}
-        
 partition_rules:
   - name: projectA
     conditions:
@@ -15,7 +14,6 @@ partition_rules:
   - name: projectB
     conditions:
       - files~=^projectB/
-
 queue_rules:
   - name: hotfix
     conditions:
@@ -62,6 +60,8 @@ queue_rules:
       - '#changes-requested-reviews-by=0'
       - '#review-requested=0'
       - label!=manual merge
+  - name: <div><input/></div>
+    merge_conditions: []
 pull_request_rules:
   - name: automatic merge for hotfix
     conditions:

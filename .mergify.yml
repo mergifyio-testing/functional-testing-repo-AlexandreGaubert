@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 defaults:
   actions:
     queue:
@@ -113,3 +114,12 @@ pull_request_rules:
     actions:
       queue:
         name: default
+=======
+pull_request_rules:
+  - name: Automatic merge on approval
+    conditions:
+      - "#approved-reviews-by>=1"
+    actions:
+      merge:
+        method: merge
+>>>>>>> 05b2cb3 (ci(Mergify): configuration update)

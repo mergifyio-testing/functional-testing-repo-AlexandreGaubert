@@ -1,7 +1,7 @@
 queue_rules:
-  - 
-    name: hotfix
-    merge_conditions:
-      - 
-        check-success=test
-    speculative_checks: 5
+    - 
+        name: hotfix
+        merge_conditions:
+            - 
+                check-success=test
+        speculative_checks: 5

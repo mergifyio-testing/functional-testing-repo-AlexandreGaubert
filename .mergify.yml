@@ -5,38 +5,107 @@ defaults:
       method: squash
       commit_message_template: |
         {{title}} (#{{number}})
-
         {{body}}
-
+partition_rules:
+  - name: projectA
+    conditions:
+      - files~=^projectA/
+  - name: projectB
+    conditions:
+      - files~=^projectB/
 queue_rules:
   - name: hotfix
-    merge_conditions:
-      - check-success=test
+    conditions:
+      - check-success=CI / test
+      - check-success=blabla
+      - check-success=wait-job
+      - schedule=Sat-Sun 09:00-17:30[Europe/Paris]
     speculative_checks: 5
-
   - name: default
-    allow_inplace_checks: true
-    merge_conditions:
+    conditions:
       - check-success=test
+      - check-success=blabla
+      - check-success=Long CI nameuuuuuuuuu
+      - check-success=CAPITAL BECAUSE WHY NOT
       - schedule=Mon-Fri 09:00-17:30[Europe/Paris]
     speculative_checks: 5
-
+    batch_size: 5
   - name: lowprio
     allow_inplace_checks: true
-    merge_conditions:
+    conditions:
       - check-success=test
       - schedule=Mon-Fri 09:30-17:00[Europe/Paris]
     speculative_checks: 3
     batch_size: 5
-
+  - name: automatic merge for hotfix
+    conditions:
+      - base=main
+      - author=@devs
+      - check-success=semantic-pull-request
+      - 'check-success=Rule: testing requirements (post_check)'
+      - label=hotfix
+      - title~=^(revert|fix)
+      - or:
+          - and:
+              - author=@eng-mgr
+              - '#approved-reviews-by>=1'
+          - and:
+              - author=@devs
+              - or:
+                  - approved-reviews-by=@eng-mgr
+                  - and:
+                      - title~=^(revert|fix)
+                      - '#approved-reviews-by>=1'
+      - '#changes-requested-reviews-by=0'
+      - '#review-requested=0'
+      - label!=manual merge
+  - name: <div><input/></div>
+    merge_conditions: []
+  - name: qsdqdqd
+    merge_conditions: []
 pull_request_rules:
   - name: automatic merge for hotfix
     conditions:
+      - merged-at>=2012-09-17T22:02:51
       - label=hotfix
     actions:
       queue:
         name: hotfix
-        
+  - name: automatic merge not queue
+    conditions:
+      - label=merge
+    actions:
+      merge: 
+  - name: Update PR
+    conditions:
+      - label=update
+    actions:
+      update: 
+  - name: Armageddon
+    conditions:
+      - label=armageddon
+    actions:
+      label:
+        add:
+          - hotfix
+          - autoqueue
+          - soap
+          - blabla
+      assign:
+        add_users:
+          - Machin
+          - Truc
+      backport:
+        branches:
+          - hotfix
+      comment:
+        message: |
+          blabla
+      review:
+        type: REQUEST_CHANGES
+        message: Request changes
+      edit:
+        draft: false
   - name: automatic merge
     conditions:
       - label=autoqueue

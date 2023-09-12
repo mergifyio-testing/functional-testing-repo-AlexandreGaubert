@@ -6,6 +6,13 @@ defaults:
       commit_message_template: |
         {{title}} (#{{number}})
         {{body}}
+partition_rules:
+  - name: projectA
+    conditions:
+      - files~=^projectA/
+  - name: projectB
+    conditions:
+      - files~=^projectB/
 queue_rules:
   - name: hotfix
     conditions:

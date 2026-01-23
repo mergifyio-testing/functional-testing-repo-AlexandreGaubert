@@ -1,0 +1,33 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm install
+    
+    - name: Run tests
+      run: npm test
+
+    - name: Mergify CI Upload
+      if: success() || failure()
+      uses: mergifyio/gha-mergify-ci@v7
+      with:
+        token: ${{ secrets.MERGIFY_TOKEN }}
+        report_path: test-reports/junit.xml

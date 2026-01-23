@@ -10,8 +10,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Configuration
-const REPO_OWNER = 'AlexandreGaubert';
-const REPO_NAME = 'mergic';
+const REPO_OWNER = 'mergifyio-testing';
+const REPO_NAME = 'functional-testing-repo-AlexandreGaubert';
 const BASE_BRANCH = 'main';
 
 function log(message, type = 'info') {

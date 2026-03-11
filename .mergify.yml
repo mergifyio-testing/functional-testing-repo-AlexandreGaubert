@@ -4,6 +4,8 @@ queue_rules:
       - check-success = test
     batch_size: 2
     batch_max_wait_time: "30 seconds"
+    ignore_review_threads_from:
+      - "AlexandreGaubert"
     merge_conditions:
       - check-success = lint
       - check-success = test

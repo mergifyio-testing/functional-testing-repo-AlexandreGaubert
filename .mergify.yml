@@ -16,3 +16,10 @@ pull_request_rules:
       - label!=manual merge
     actions:
       queue:
+
+scopes:
+  source:
+    files:
+      frontend:
+        include:
+          - frontend/**

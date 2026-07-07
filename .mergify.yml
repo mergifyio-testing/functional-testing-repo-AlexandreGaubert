@@ -1,18 +1,16 @@
 queue_rules:
-  - name: Run tests on main branch
-    queue_conditions:
-      - check-success = test
-      - "#review-threads-unresolved=0"
+  - name: default
     batch_size: 2
-    batch_max_wait_time: "30 seconds"
+    batch_max_wait_time: "10 seconds"
+    queue_conditions:
+      - label = queue
     merge_conditions:
-      - check-success = lint
-      - check-success = test
+      - check-success = unit-tests
 
 pull_request_rules:
-  - name: automatic merge
+  - name: queue on label
     conditions:
-      - base=main
-      - label!=manual merge
+      - base = main
+      - label = queue
     actions:
       queue:

@@ -1,26 +1,37 @@
-name: Tests
+name: scenario-ci
 
 on:
   pull_request:
-    branches: [main]
   push:
     branches: [main]
 
 jobs:
-  test:
+  unit-tests:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          node-version: "18"
-          cache: "npm"
+          python-version: "3.12"
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install test dependencies
+        run: pip install pytest pytest-mergify
+
+      # The local Mergify engine cannot be reached from GitHub-hosted
+      # runners, so the per-test upload is replayed locally. Dump the exact
+      # runtime context so the replay uses the real values, not hand-crafted
+      # ones.
+      - name: Dump runtime context for local replay
+        run: |
+          echo "::group::ENV-DUMP"
+          env | sort
+          echo "::endgroup::"
+          echo "::group::EVENT-DUMP"
+          cat "$GITHUB_EVENT_PATH"
+          echo "::endgroup::"
 
       - name: Run tests
-        run: sleep 120 && npm test
+        run: python -m pytest tests/ -v

@@ -2,6 +2,7 @@ queue_rules:
   - name: default
     batch_size: 2
     batch_max_wait_time: "10 seconds"
+    max_checks_retries: 1
     queue_conditions:
       - label = queue
     merge_conditions:

@@ -17,13 +17,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Vendored patched pytest-mergify (MRGFY-7854 test-selection support),
-      # talking to a local Mergify engine through an ephemeral tunnel.
       - name: Install test dependencies
-        run: pip install pytest ./vendor/pytest_mergify-*.whl
+        run: pip install pytest pytest-mergify
 
       - name: Run tests
-        env:
-          MERGIFY_API_URL: ${{ vars.MERGIFY_API_URL }}
-          MERGIFY_TOKEN: ${{ secrets.MERGIFY_TOKEN }}
         run: python -m pytest tests/ -v

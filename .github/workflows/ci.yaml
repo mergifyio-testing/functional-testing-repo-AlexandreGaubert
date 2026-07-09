@@ -17,21 +17,13 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Vendored patched pytest-mergify (MRGFY-7854 test-selection support),
+      # talking to a local Mergify engine through an ephemeral tunnel.
       - name: Install test dependencies
-        run: pip install pytest pytest-mergify
-
-      # The local Mergify engine cannot be reached from GitHub-hosted
-      # runners, so the per-test upload is replayed locally. Dump the exact
-      # runtime context so the replay uses the real values, not hand-crafted
-      # ones.
-      - name: Dump runtime context for local replay
-        run: |
-          echo "::group::ENV-DUMP"
-          env | sort
-          echo "::endgroup::"
-          echo "::group::EVENT-DUMP"
-          cat "$GITHUB_EVENT_PATH"
-          echo "::endgroup::"
+        run: pip install pytest ./vendor/pytest_mergify-*.whl
 
       - name: Run tests
+        env:
+          MERGIFY_API_URL: ${{ vars.MERGIFY_API_URL }}
+          MERGIFY_TOKEN: ${{ secrets.MERGIFY_TOKEN }}
         run: python -m pytest tests/ -v

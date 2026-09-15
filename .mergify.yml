@@ -15,3 +15,10 @@ pull_request_rules:
       - label = queue
     actions:
       queue:
+  - name: label conflicts (MRGFY-8752 level-3 probe)
+    conditions:
+      - conflict
+    actions:
+      label:
+        add:
+          - conflict

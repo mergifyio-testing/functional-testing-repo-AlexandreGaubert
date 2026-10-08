@@ -1,5 +1,15 @@
+defaults:
+  actions:
+    queue:
+      name: main
+
 queue_rules:
-  - name: default
+  - name: main
+    queue_conditions:
+      - base = main
+    merge_conditions:
+      - check-success = proof-gate-6802
+  - name: other
     merge_conditions:
       - check-success = proof-gate-6802
 
@@ -9,4 +19,4 @@ pull_request_rules:
       - base = main
       - label = queue
     actions:
-      queue:
+      queue: {}

@@ -15,17 +15,3 @@ pull_request_rules:
       - label = queue
     actions:
       queue:
-  - name: MRGFY-9866 proof, never fires
-    conditions:
-      - label = ag-9866-never-set
-    actions:
-      squash:
-        commit_message: first-commit
-
-commands_restrictions:
-  rebase:
-    conditions:
-      - sender-permission >= write
-  squash:
-    conditions:
-      - sender = nobody-ag-9866

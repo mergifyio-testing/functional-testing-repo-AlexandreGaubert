@@ -2,9 +2,6 @@ queue_rules:
   - name: default
     merge_conditions:
       - check-success = proof-gate-6802
-  - name: urgent
-    merge_conditions:
-      - check-success = proof-gate-6802
 
 pull_request_rules:
   - name: queue on label
@@ -13,9 +10,3 @@ pull_request_rules:
       - label = queue
     actions:
       queue:
-  - name: queue hotfixes
-    conditions:
-      - label = hotfix
-    actions:
-      queue:
-        name: urgent

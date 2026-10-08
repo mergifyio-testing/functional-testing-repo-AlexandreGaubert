@@ -2,19 +2,20 @@ queue_rules:
   - name: default
     merge_conditions:
       - check-success = proof-gate-6802
+  - name: urgent
+    merge_conditions:
+      - check-success = proof-gate-6802
 
 pull_request_rules:
+  - name: queue on label
+    conditions:
+      - base = main
+      - label = queue
+    actions:
+      queue:
   - name: queue hotfixes
     conditions:
       - label = hotfix
     actions:
-      label:
-        add:
-          - hotfix-queued
-merge_protections_settings:
-  auto_merge_conditions:
-    - or:
-        - and:
-            - base = main
-            - label = queue
-        - label = hotfix
+      queue:
+        name: urgent

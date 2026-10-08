@@ -1,17 +1,31 @@
 pull_request_rules:
-  - name: automatic merge
-    conditions:
-      - base = main
-      - label = automerge
-    actions:
-      merge:
-        method: squash
   - name: bot merge
     conditions:
       - base = main
       - label = botmerge
     actions:
-      merge:
       label:
         add:
           - merged-by-rule
+merge_protections:
+  # Migrated from the `merge` action of rule 'automatic merge'. Without the merge queue, auto-merge only merges a pull request a merge protection rule applies to.
+  - name: automatic merge
+    if:
+      - base = main
+      - label = automerge
+    success_conditions: []
+  # Migrated from the `merge` action of rule 'bot merge'. Without the merge queue, auto-merge only merges a pull request a merge protection rule applies to.
+  - name: bot merge
+    if:
+      - base = main
+      - label = botmerge
+    success_conditions: []
+merge_protections_settings:
+  auto_merge_conditions:
+    - or:
+        - and:
+            - base = main
+            - label = automerge
+        - and:
+            - base = main
+            - label = botmerge

@@ -1,17 +1,16 @@
 queue_rules:
   - name: default
-    batch_size: 2
-    batch_max_wait_time: "10 seconds"
-    max_checks_retries: 1
-    queue_conditions:
-      - label = queue
+    commit_message_template: "{{ title }}"
     merge_conditions:
-      - check-success = unit-tests
+      - check-success = proof-gate-6802
+  - name: urgent
+    merge_conditions:
+      - check-success = proof-gate-6802
 
 pull_request_rules:
-  - name: queue on label
+  - name: queue hotfixes
     conditions:
-      - base = main
-      - label = queue
+      - label = hotfix
     actions:
       queue:
+        name: urgent

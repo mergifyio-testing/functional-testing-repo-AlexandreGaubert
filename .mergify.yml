@@ -2,17 +2,12 @@ queue_rules:
   - name: default
     merge_conditions: []
 
-pull_request_rules:
-  - name: automatic merge
-    conditions:
-      - base = main
-      - label = automerge
-    actions:
-      merge:
-        method: squash
-  - name: queue on label
-    conditions:
-      - base = main
-      - label = queue
-    actions:
-      queue:
+merge_protections_settings:
+  auto_merge_conditions:
+    - or:
+        - and:
+            - base = main
+            - label = queue
+        - and:
+            - base = main
+            - label = automerge

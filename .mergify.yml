@@ -1,3 +1,13 @@
+queue_rules:
+  - name: default
+    batch_size: 2
+    batch_max_wait_time: "10 seconds"
+    max_checks_retries: 1
+    queue_conditions:
+      - label = queue
+    merge_conditions:
+      - check-success = unit-tests
+
 pull_request_rules:
   - name: queue on label
     conditions:
@@ -5,15 +15,3 @@ pull_request_rules:
       - label = queue
     actions:
       queue:
-merge_protections:
-  # Migrated from the `merge` action of rule 'automatic merge': without the
-  # merge queue, auto-merge only merges pull requests a rule applies to.
-  - name: automatic merge
-    if:
-      - base = main
-      - label = automerge
-    success_conditions: []
-merge_protections_settings:
-  auto_merge_conditions:
-    - base = main
-    - label = automerge

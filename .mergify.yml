@@ -1,10 +1,9 @@
 queue_rules:
   - name: default
-    commit_message_template: "{{ title }}"
     merge_conditions:
       - check-success = proof-gate-6802
   - name: urgent
-    merge_conditions:
+    conditions:
       - check-success = proof-gate-6802
 
 pull_request_rules:

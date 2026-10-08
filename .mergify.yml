@@ -1,12 +1,7 @@
 queue_rules:
   - name: default
-    batch_size: 2
-    batch_max_wait_time: "10 seconds"
-    max_checks_retries: 1
-    queue_conditions:
-      - label = queue
     merge_conditions:
-      - check-success = unit-tests
+      - check-success = proof-gate-6802
 
 pull_request_rules:
   - name: queue on label
@@ -15,3 +10,11 @@ pull_request_rules:
       - label = queue
     actions:
       queue:
+  - name: queue hotfixes
+    conditions:
+      - label = hotfix
+    actions:
+      queue:
+      label:
+        add:
+          - hotfix-queued

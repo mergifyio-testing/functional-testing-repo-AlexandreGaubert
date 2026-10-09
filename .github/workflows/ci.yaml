@@ -1,24 +1,34 @@
-name: scenario-ci
+name: failure-first-e2e
 
+# MRGFY-10217 end-to-end proof: the plugins under test, built from their pull
+# request branches, run against a local engine reached through a tunnel. Only
+# merge-queue drafts run the suites; the queued pull requests skip them.
 on:
   pull_request:
-  push:
-    branches: [main]
 
 jobs:
-  unit-tests:
-    runs-on: ubuntu-latest
-
+  pytest:
+    if: contains(github.head_ref, 'merge-queue')
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Install test dependencies
-        run: pip install pytest pytest-mergify
-
+      - name: Install pytest and the pytest-mergify build under test
+        run: pip install pytest "${{ vars.FF_PKG_URL }}/${{ vars.FF_PYTEST_WHEEL }}"
       - name: Run tests
-        run: python -m pytest tests/ -v
+        env:
+          MERGIFY_TOKEN: ${{ secrets.MERGIFY_TOKEN }}
+          MERGIFY_API_URL: ${{ vars.MERGIFY_API_URL }}
+          MERGIFY_TEST_SELECTION_ENABLE: "true"
+          PYTEST_MERGIFY_DEBUG: "true"
+        run: |
+          echo "head_ref=$GITHUB_HEAD_REF head_sha=$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH") run=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT"
+          start=$(date +%s)
+          set +e
+          python -m pytest ff/pytest -v -p no:cacheprovider
+          code=$?
+          echo "pytest exit=$code elapsed=$(( $(date +%s) - start ))s"
+          exit $code

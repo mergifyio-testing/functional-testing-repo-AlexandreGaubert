@@ -1,12 +1,15 @@
+merge_queue:
+  max_parallel_checks: 2
+
 queue_rules:
   - name: default
-    batch_size: 2
-    batch_max_wait_time: "10 seconds"
-    max_checks_retries: 1
+    batch_size: 4
+    batch_max_wait_time: "60 seconds"
+    max_checks_retries: 0
     queue_conditions:
       - label = queue
     merge_conditions:
-      - check-success = unit-tests
+      - check-success = pytest
 
 pull_request_rules:
   - name: queue on label

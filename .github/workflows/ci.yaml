@@ -1,139 +1,24 @@
-name: failure-first-e2e
+name: scenario-ci
 
-# MRGFY-10217 end-to-end proof: the plugins under test, built from their pull
-# request branches, run against a local engine reached through a tunnel. Only
-# merge-queue drafts run the suites, and only the jobs named in FF_JOBS; the
-# queued pull requests skip them.
 on:
   pull_request:
+  push:
+    branches: [main]
 
 jobs:
-  pytest:
-    if: contains(github.head_ref, 'merge-queue') && contains(vars.FF_JOBS, 'pytest')
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 15
+  unit-tests:
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install pytest and the pytest-mergify build under test
-        run: pip install pytest "${{ vars.FF_PKG_URL }}/${{ vars.FF_PYTEST_WHEEL }}"
+
+      - name: Install test dependencies
+        run: pip install pytest pytest-mergify
+
       - name: Run tests
-        env:
-          MERGIFY_TOKEN: ${{ secrets.MERGIFY_TOKEN }}
-          MERGIFY_API_URL: ${{ vars.MERGIFY_API_URL }}
-          MERGIFY_TEST_SELECTION_ENABLE: "true"
-        run: |
-          echo "head_ref=$GITHUB_HEAD_REF head_sha=$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH") run=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT"
-          start=$(date +%s)
-          set +e
-          python -m pytest ff/pytest -v -p no:cacheprovider
-          code=$?
-          echo "pytest exit=$code elapsed=$(( $(date +%s) - start ))s"
-          exit $code
-
-  vitest:
-    if: contains(github.head_ref, 'merge-queue') && contains(vars.FF_JOBS, 'vitest')
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 15
-    defaults:
-      run:
-        working-directory: ff/js
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-      - name: Install vitest and the @mergifyio/vitest build under test
-        env:
-          P: ${{ vars.FF_PKG_URL }}/${{ vars.FF_TS_DIR }}
-        run: |
-          npm install --no-audit --no-fund
-          npm install --no-save --no-audit --no-fund "$P/mergifyio-ci-native-linux-arm64-gnu-0.0.0.tgz" "$P/mergifyio-ci-native-0.0.0.tgz" "$P/mergifyio-ci-core-0.0.0.tgz" "$P/mergifyio-vitest-0.0.0.tgz"
-      - name: Run vitest
-        env:
-          MERGIFY_TOKEN: ${{ secrets.MERGIFY_TOKEN }}
-          MERGIFY_API_URL: ${{ vars.MERGIFY_API_URL }}
-          MERGIFY_TEST_SELECTION_ENABLE: "true"
-        run: |
-          echo "head_ref=$GITHUB_HEAD_REF head_sha=$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH") run=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT"
-          start=$(date +%s)
-          set +e
-          npx vitest run
-          code=$?
-          echo "vitest exit=$code elapsed=$(( $(date +%s) - start ))s"
-          exit $code
-
-  playwright:
-    if: contains(github.head_ref, 'merge-queue') && contains(vars.FF_JOBS, 'playwright')
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 15
-    defaults:
-      run:
-        working-directory: ff/js
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-      - name: Install Playwright and the @mergifyio/playwright build under test
-        env:
-          P: ${{ vars.FF_PKG_URL }}/${{ vars.FF_TS_DIR }}
-        run: |
-          npm install --no-audit --no-fund
-          npm install --no-save --no-audit --no-fund "$P/mergifyio-ci-native-linux-arm64-gnu-0.0.0.tgz" "$P/mergifyio-ci-native-0.0.0.tgz" "$P/mergifyio-ci-core-0.0.0.tgz" "$P/mergifyio-playwright-0.0.0.tgz"
-      - name: Run playwright
-        env:
-          MERGIFY_TOKEN: ${{ secrets.MERGIFY_TOKEN }}
-          MERGIFY_API_URL: ${{ vars.MERGIFY_API_URL }}
-          MERGIFY_TEST_SELECTION_ENABLE: "true"
-        run: |
-          echo "head_ref=$GITHUB_HEAD_REF head_sha=$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH") run=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT"
-          start=$(date +%s)
-          set +e
-          npx playwright test
-          code=$?
-          echo "playwright exit=$code elapsed=$(( $(date +%s) - start ))s"
-          exit $code
-
-  rspec:
-    if: contains(github.head_ref, 'merge-queue') && contains(vars.FF_JOBS, 'rspec')
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 15
-    defaults:
-      run:
-        working-directory: ff/rspec
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.3"
-      - name: Install rspec and the rspec-mergify build under test
-        run: |
-          gem install --no-document rspec -v '~> 3.13'
-          curl -fsSL -o /tmp/rspec-mergify.gem "${{ vars.FF_PKG_URL }}/${{ vars.FF_RSPEC_GEM }}"
-          gem install --local --no-document /tmp/rspec-mergify.gem
-      - name: Run rspec
-        env:
-          MERGIFY_TOKEN: ${{ secrets.MERGIFY_TOKEN }}
-          MERGIFY_API_URL: ${{ vars.MERGIFY_API_URL }}
-          MERGIFY_TEST_SELECTION_ENABLE: "true"
-        run: |
-          echo "head_ref=$GITHUB_HEAD_REF head_sha=$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH") run=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT"
-          start=$(date +%s)
-          set +e
-          rspec --format documentation
-          code=$?
-          echo "rspec exit=$code elapsed=$(( $(date +%s) - start ))s"
-          exit $code
-
-  all-greens:
-    if: always() && contains(github.head_ref, 'merge-queue')
-    needs: [pytest, vitest, playwright, rspec]
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Every selected suite passed
-        env:
-          NEEDS: ${{ toJSON(needs) }}
-        run: echo "$NEEDS" | jq -e '[.[].result] | all(. == "success" or . == "skipped")'
+        run: python -m pytest tests/ -v

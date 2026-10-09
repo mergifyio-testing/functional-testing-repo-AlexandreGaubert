@@ -9,7 +9,7 @@ queue_rules:
     queue_conditions:
       - label = queue
     merge_conditions:
-      - check-success = pytest
+      - check-success = all-greens
 
 pull_request_rules:
   - name: queue on label

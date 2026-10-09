@@ -1,0 +1,9 @@
+{
+  "name": "ff-e2e-js",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "vitest": "5.0.3"
+  }
+}

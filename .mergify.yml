@@ -1,18 +1,2 @@
-pull_request_rules:
-  - name: bot merge
-    conditions:
-      - base = main
-      - label = botmerge
-    actions:
-      label:
-        add:
-          - merged-by-rule
 merge_protections_settings:
-  auto_merge_conditions:
-    - or:
-        - and:
-            - base = main
-            - label = automerge
-        - and:
-            - base = main
-            - label = botmerge
+  auto_merge_conditions: true

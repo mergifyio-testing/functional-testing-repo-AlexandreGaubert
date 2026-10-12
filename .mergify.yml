@@ -1,17 +1,17 @@
-queue_rules:
-  - name: default
-    batch_size: 2
-    batch_max_wait_time: "10 seconds"
-    max_checks_retries: 1
-    queue_conditions:
-      - label = queue
-    merge_conditions:
-      - check-success = unit-tests
-
 pull_request_rules:
-  - name: queue on label
+  - name: automatic merge
     conditions:
       - base = main
-      - label = queue
+      - label = automerge
     actions:
-      queue:
+      merge:
+        method: squash
+  - name: bot merge
+    conditions:
+      - base = main
+      - label = botmerge
+    actions:
+      merge:
+      label:
+        add:
+          - merged-by-rule

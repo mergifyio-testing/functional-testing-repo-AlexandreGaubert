@@ -1,3 +1,4 @@
+# The `queue` action of rule 'queue on label' was removed without a replacement: Workflow Automation is not enabled on this repository, so the rule never ran.
 queue_rules:
   - name: default
     batch_size: 2
@@ -8,10 +9,3 @@ queue_rules:
     merge_conditions:
       - check-success = unit-tests
 
-pull_request_rules:
-  - name: queue on label
-    conditions:
-      - base = main
-      - label = queue
-    actions:
-      queue:

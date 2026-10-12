@@ -1,17 +1,9 @@
 pull_request_rules:
-  - name: automatic merge
-    conditions:
-      - base = main
-      - label = automerge
-    actions:
-      merge:
-        method: squash
   - name: bot merge
     conditions:
       - base = main
       - label = botmerge
     actions:
-      merge:
       label:
         add:
           - merged-by-rule

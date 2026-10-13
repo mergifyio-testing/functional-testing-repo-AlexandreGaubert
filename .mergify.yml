@@ -6,8 +6,7 @@ queue_rules:
     queue_conditions:
       - label = queue
     merge_conditions:
-      - check-success = leg-tests (ubuntu-24.04-arm)
-      - check-success = leg-tests (macos-15)
+      - check-success = all-greens
 
 pull_request_rules:
   - name: queue on label

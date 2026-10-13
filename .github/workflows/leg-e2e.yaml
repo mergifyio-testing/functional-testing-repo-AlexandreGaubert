@@ -42,3 +42,12 @@ jobs:
         run: |
           echo "head_ref=$GITHUB_HEAD_REF head_sha=$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH") run=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT orch=$ACTIONS_ORCHESTRATION_ID"
           python -m pytest leg -v -p no:cacheprovider
+
+  # When both legs must report before the batch is judged (fail-fast off), the
+  # queue waits on this job rather than on each leg.
+  all-greens:
+    if: always() && contains(github.head_ref, 'merge-queue')
+    needs: leg-tests
+    runs-on: ubuntu-latest
+    steps:
+      - run: '[ "${{ needs.leg-tests.result }}" = success ]'

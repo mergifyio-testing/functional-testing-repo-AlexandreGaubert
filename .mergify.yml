@@ -1,17 +1,7 @@
-queue_rules:
-  - name: default
-    batch_size: 2
-    batch_max_wait_time: "10 seconds"
-    max_checks_retries: 1
-    queue_conditions:
-      - label = queue
-    merge_conditions:
-      - check-success = unit-tests
-
 pull_request_rules:
-  - name: queue on label
-    conditions:
-      - base = main
-      - label = queue
+  - name: per-branch probe (main)
+    conditions: []
     actions:
-      queue:
+      label:
+        add: [cfg-main]
+        remove: [cfg-release, cfg-release-v2, cfg-github-dir, cfg-main-github-dir]

@@ -1,0 +1,7 @@
+pull_request_rules:
+  - name: per-branch probe (main, .github)
+    conditions: []
+    actions:
+      label:
+        add: [cfg-main-github-dir]
+        remove: [cfg-main, cfg-release, cfg-release-v2, cfg-github-dir]

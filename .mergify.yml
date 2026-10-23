@@ -1,7 +1,5 @@
 pull_request_rules:
-  - name: per-branch probe (main)
+  - name: broken
     conditions: []
     actions:
-      label:
-        add: [cfg-main]
-        remove: [cfg-release, cfg-release-v2, cfg-github-dir, cfg-main-github-dir]
+      not_an_action: {}
